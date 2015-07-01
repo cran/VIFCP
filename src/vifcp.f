@@ -4,10 +4,10 @@ C      PROGRAM TEST
 C  Input: 
 C  y: dataset; l:length of segment; siglev: sign. level 
       IMPLICIT NONE
-C      real*8 A(20)
-      real*8 y(*),z(100000),v(100000),vtemp,vnew,c(100000)
+      real*8 y(*),z(10000),v(10000),vtemp,vnew,c(10000)
       real*8 t,pn,rho,sigma,sigmap,sigmam
-      integer i,j,k,l,n,aa,s(100000),m,flag,shift,length,cpset(100)
+      integer i,j,k,l,n,aa,s(10000),m,temp
+      integer flag,shift,length,cpset(100)
       real*8 siglev,w,dw,alpha
       integer ws
       
@@ -67,14 +67,20 @@ C   Test for a changepoint in (il-l/2,il+l) using the CUSUM
           z(k)=y(k+shift);  k=k+1
           end do
           call changepoint(z,length,siglev,ws)
-C          print*,'ws=',ws
-C          print*,'shift=',shift 
-
+          temp=m+1;
 C   If the test is significant, obtain the exact changepoint
-          if(ws>0 .and. (m==0 .or. abs(ws+shift-cpset(m))>l)) then
-                  ws=ws+shift; m=m+1;  s(m+1)=i;   flag=i; w=w+dw
+          if(ws>0 .and. m==0) then
+                  ws=ws+shift; m=m+1;  s(m+1)=i;  
+                  flag=i; w=w+dw
                   cpset(m)=ws
-              end if
+                  temp=m;
+          else if(ws>0 .and. abs(ws+shift-cpset(temp))>l)then
+                  ws=ws+shift; m=m+1;  s(m+1)=i;  
+                  flag=i; w=w+dw
+                  cpset(m)=ws
+                  temp=m;
+          end if
+          
           else
           ws=0
           end if
