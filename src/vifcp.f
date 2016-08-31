@@ -4,11 +4,11 @@ C      PROGRAM TEST
 C  Input: 
 C  y: dataset; l:length of segment; siglev: sign. level 
       IMPLICIT NONE
-      real*8 y(*),z(10000),v(10000),vtemp,vnew,c(10000)
-      real*8 t,pn,rho,sigma,sigmap,sigmam
+      double precision y(*),z(10000),v(10000),vtemp,vnew,c(10000)
+      double precision t,pn,rho,sigma,sigmap,sigmam
       integer i,j,k,l,n,aa,s(10000),m,temp
       integer flag,shift,length,cpset(100)
-      real*8 siglev,w,dw,alpha
+      double precision siglev,w,dw,alpha
       integer ws
       
 C   Initiate parameter values
@@ -99,49 +99,21 @@ C   Update i until i>=aa or w<=0
 
       subroutine pnorm(t,pn)
       integer loop
-      real*8 t,pn,stepsize,step
+      double precision t,pn,stepsize,step
       loop=16;  stepsize=t/(2.0*loop); step=stepsize; pn=stepsize;
       do while(step<t-stepsize)
-      pn=pn+4.0*exp(-step*step/2)*stepsize
+      pn=pn+4.0*exp(-step*step/2.0)*stepsize
       step=step+stepsize
-      pn=pn+2.0*exp(-step*step/2)*stepsize
+      pn=pn+2.0*exp(-step*step/2.0)*stepsize
       step=step+stepsize
       end do
-      pn=pn+4.0*exp(-step*step/2)*stepsize+exp(-t*t/2)*stepsize
+      pn=pn+4.0*exp(-step*step/2.0)*stepsize+exp(-t*t/2.0)*stepsize
       pn=pn/3.0/sqrt(2.0*3.1415926)+0.5
       return
       end
 
 
-      subroutine changepointnew(z,n,siglev,cp)
-      integer n,k,cp
-      real*8 z(n),siglev,sumn,sumsquaren,sumk
-      real*8 uk,ukt,umax,pv,pvta,pvtb,pvb
-      k=0;  sumn=0;  sumsquaren=0
-      do while(k<n)
-      k=k+1;    sumn=sumn+z(k);   sumsquaren=sumsquaren+z(k)*z(k)
-      end do
-      k=1;  sumk=z(k);  umax=0
-      do while(k<n)
-      ukt=abs(n*1.0*sumk-k*1.0*sumn)
-      ukb=k*(n-k)*sumsquaren-(n-k)*sumk*sumk-k*(sumn-sumk)*(sumn-sumk)
-      uk=ukt/sqrt(ukb)
-      if(uk>umax) then
-      umax=uk;  cp=k
-      end if
-      k=k+1;    sumk=sumk+z(k)
-      end do
-      pvta=-log(-0.5*log(1-siglev))+2*log(log(n*1.0))
-      pvtb=0.5*log(log(log(n*1.0)))-0.5*log(3.1415926)
-      pvb=SQRT(2*log(log(n*1.0)))
-      pv=(pvta+pvtb)/pvb
-      if(umax<pv) then
-      cp=0
-      end if
-      RETURN
-      END
-
-
+ 
 C weighted statistical testing for a signal c.p.
       subroutine changepoint (A, n, siglev,ws)
 
@@ -149,12 +121,12 @@ C A:        the list of data based on which to find c.p.
 C n:        length of the data
 C siglev:  signifiance level
       integer n
-      real*8 A(n), siglev,pi
+      double precision A(n), siglev,pi
 C add some useful parameters.
-      real*8 Sa, bara2, bara
-      real*8 ca(n-1),wa(n-1),cw(n-1)
+      double precision Sa, bara2, bara
+      double precision ca(n-1),wa(n-1),cw(n-1)
       Integer i
-      real*8 sta
+      double precision sta
       integer WS
 
       Sa=0.0
@@ -174,7 +146,7 @@ C firstly calculate the mean of A and A^2
       do 20 i=1,(n-1)
          Sa=Sa+A(i)
          ca(i)=(sa-i*bara)/(SQRT(i*(n-i)/(n*1.0)))
-         wa(i)=SQRT(bara2-(Sa**2)/(i*n)-(bara*n-Sa)**2/(n*(n-i)*1.0))
+         wa(i)=SQRT(bara2-(Sa**2.0)/(i*n)-(bara*n-Sa)**2/(n*(n-i)*1.0))
          cw(i)=ABS(ca(i)/wa(i))
 20    continue
 
@@ -187,9 +159,9 @@ C firstly calculate the mean of A and A^2
            end if
 30    continue
 
-      pvalue=(-log(-0.5*log(1-siglev))+2*log(log(n*1.0))+
+      pvalue=(-log(-0.5*log(1-siglev))+2.0*log(log(n*1.0))+
      * 0.5*log(log(log(n*1.0)))-0.5*log(pi))/
-     *(SQRT(2*log(log(n*1.0))))
+     *(SQRT(2.0*log(log(n*1.0))))
       IF(sta .LT. pvalue) WS=0
       RETURN
       END

@@ -36,7 +36,7 @@ Xiaoping Shi, Xiangsheng Wang, Dongwei Wei, Yuehua Wu
 Maintainer: Dongwei Wei (weidw@mathstat.yorku.ca)
 }
 \references{
- A sequential multiple change-point detection procedure via VIF regression
+ Xiaoping Shi, Xiang-Sheng Wang, Dongwei Wei, Yuehua Wu. (2016). A sequential multiple changepoint detection procedure via VIF regression. Computational Statistics. 31(2): 671-691.
 }
 
 \examples{
